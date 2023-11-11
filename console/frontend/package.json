@@ -5,7 +5,7 @@
   "dependencies": {
     "@restart/hooks": "^0.3.8",
     "async-mqtt": "^2.3.0",
-    "axios": "^0.19.0",
+    "axios": "^1.6.0",
     "bootstrap": "^4.3.1",
     "es6-promise": "^4.2.8",
     "konva": "^3.4.1",
