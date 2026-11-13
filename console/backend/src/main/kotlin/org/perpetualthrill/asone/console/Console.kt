@@ -7,6 +7,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import io.ktor.server.locations.KtorExperimentalLocationsAPI
 import io.reactivex.Single
 import org.perpetualthrill.asone.console.di.DaggerMainComponent
 import org.perpetualthrill.asone.console.di.MainComponent
@@ -25,7 +26,7 @@ class Console : CliktCommand() {
 
     @Inject lateinit var serialMonitor: SerialMonitor
     @Inject lateinit var sensorState: SensorState
-    @io.ktor.locations.KtorExperimentalLocationsAPI
+    @KtorExperimentalLocationsAPI
     @Inject lateinit var webServer: WebServer
     @Inject lateinit var mqttManager: MqttManager
     @Inject lateinit var scoreboardState: ScoreboardState
@@ -44,7 +45,7 @@ class Console : CliktCommand() {
         mainComponent.inject(this)
     }
 
-    @io.ktor.locations.KtorExperimentalLocationsAPI
+    @KtorExperimentalLocationsAPI
     override fun run() {
         if (!disableSerialArgument) {
             serialMonitor.start()
