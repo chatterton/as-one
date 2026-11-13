@@ -351,6 +351,8 @@ constructor(
                     rightBuffer.add(fixBPM)
                     rightBPM = averageBuffer(rightBuffer)
                 }
+
+                null -> {}
             }
         }
 
