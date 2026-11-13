@@ -17,10 +17,10 @@ import Collapse from 'react-bootstrap/Collapse'
 const mqttAddress = 'ws://' + window.location.hostname + ':8181'
 
 function App () {
-  let [scoreboardOpen, setScoreboardOpen] = useState(false)
-  let [sensorMonitorOpen, setSensorMonitorOpen] = useState(true)
+  const [scoreboardOpen, setScoreboardOpen] = useState(false)
+  const [sensorMonitorOpen, setSensorMonitorOpen] = useState(true)
 
-  let spacer = <Row style={{ height: '40px' }} />
+  const spacer = <Row style={{ height: '40px' }} />
 
   return (
     <div className='App'>
@@ -44,7 +44,7 @@ function App () {
           </Col>
           <Col md={0} lg={1} />
         </Row>
-        { spacer }
+        {spacer}
         <Row>
           <Col md={0} lg={1} />
           <Col md={12} lg={10}>
@@ -52,7 +52,7 @@ function App () {
           </Col>
           <Col md={0} lg={1} />
         </Row>
-        { spacer }
+        {spacer}
         <Row>
           <Col md={0} lg={1} />
           <Col>
@@ -74,14 +74,14 @@ function App () {
           </Col>
           <Col md={0} lg={1} />
         </Row>
-        { spacer }
+        {spacer}
         <Row>
           <Col md={0} lg={1} />
           <Col>
             <div className='card' style={{ backgroundColor: GREYISH_BLACK }}>
               <h4 className='card-header'>
                 <a href='#/' onClick={() => setScoreboardOpen(!scoreboardOpen)}>
-                Scoreboard
+                  Scoreboard
                   <span className='float-right'>▼</span>
                 </a>
               </h4>
@@ -96,7 +96,7 @@ function App () {
           <Col md={0} lg={1} />
         </Row>
 
-        { spacer }
+        {spacer}
 
         <Row>
           <Col md={0} lg={1} />
@@ -113,7 +113,7 @@ function App () {
           <Col md={0} lg={1} />
         </Row>
 
-        { spacer }
+        {spacer}
 
       </Container>
     </div>

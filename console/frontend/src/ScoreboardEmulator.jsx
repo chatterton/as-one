@@ -13,10 +13,10 @@ const GREYISH_BLACK = '#222222'
 function ScoreboardEmulator (props) {
   const address = props.address
 
-  let [started, setStarted] = useState(false)
-  let [leds, setLeds] = useState([])
-  let [board, setBoard] = useState([])
-  let [ref, checkedWidth] = useCheckedWidth()
+  const [started, setStarted] = useState(false)
+  const [leds, setLeds] = useState([])
+  const [board, setBoard] = useState([])
+  const [ref, checkedWidth] = useCheckedWidth()
 
   function _rgbToHex (r, g, b) {
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
@@ -57,7 +57,7 @@ function ScoreboardEmulator (props) {
     if (leds) {
       // First, process the incoming rgb values into an array of hex triplets
       const processedArray = []
-      for (var i = 0; i < leds.length; i += 3) {
+      for (let i = 0; i < leds.length; i += 3) {
         const brightnessPercentage = (leds[i] + leds[i + 1] + leds[i + 2]) / (255 * 3)
         // Magic number threshold below which the pixel will be shown as dim grey
         if (brightnessPercentage > 0.1) {
@@ -73,13 +73,16 @@ function ScoreboardEmulator (props) {
       processedArray.map(function (value, index) {
         const x = scoreboardAddressTable[index].x
         const y = scoreboardAddressTable[index].y
-        const replacement = <Rect
-          x={pixelSize * x}
-          y={pixelSize * y}
-          width={pixelSize}
-          height={pixelSize}
-          fill={value}
-          key={_locationToKey(x, y)} />
+        const replacement = (
+          <Rect
+            x={pixelSize * x}
+            y={pixelSize * y}
+            width={pixelSize}
+            height={pixelSize}
+            fill={value}
+            key={_locationToKey(x, y)}
+          />
+        )
         board[x][y] = replacement
         return value
       })
@@ -93,9 +96,9 @@ function ScoreboardEmulator (props) {
     // using that value, create the board
     const pixelSize = _pixelSize(checkedWidth)
     const screen = []
-    for (var i = 0; i < SCOREBOARD_WIDTH; i++) {
+    for (let i = 0; i < SCOREBOARD_WIDTH; i++) {
       const column = []
-      for (var j = 0; j < SCOREBOARD_HEIGHT; j++) {
+      for (let j = 0; j < SCOREBOARD_HEIGHT; j++) {
         const pixel = <Rect x={pixelSize * i} y={pixelSize * j} width={pixelSize} height={pixelSize} fill={GREYISH_BLACK} key={_locationToKey(i, j)} />
         column.push(pixel)
       }
@@ -108,7 +111,7 @@ function ScoreboardEmulator (props) {
     <div ref={ref}>
       <Stage width={checkedWidth} height={checkedWidth / 3}>
         <Layer>
-          { board.flat() }
+          {board.flat()}
         </Layer>
       </Stage>
     </div>

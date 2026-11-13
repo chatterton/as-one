@@ -10,9 +10,9 @@ import { Reset } from './Reset'
 function FireTest (props) {
   const address = props.address
 
-  let [started, setStarted] = useState(false)
-  let [mq, setMq] = useState(null)
-  let [lefty, setLefty] = useState('169')
+  const [started, setStarted] = useState(false)
+  const [mq, setMq] = useState(null)
+  const [lefty, setLefty] = useState('169')
 
   useEffect(() => {
     async function subscribe () {
@@ -56,7 +56,9 @@ function FireTest (props) {
           id='upper-button'
           onClick={() => {
             mqttPublish('asOne/fe/testUpper', '500')
-          }}>Upper ______</Button>
+          }}
+        >Upper ______
+        </Button>
       </Col>
       <Col>
         <Button
@@ -64,7 +66,9 @@ function FireTest (props) {
           id='lower-button'
           onClick={() => {
             mqttPublish('asOne/fe/testLower', '375')
-          }}>Lower ______</Button>
+          }}
+        >Lower ______
+        </Button>
       </Col>
       <Col>
         <Button
@@ -72,7 +76,9 @@ function FireTest (props) {
           id='80-bpm-button'
           onClick={() => {
             mqttPublish('asOne/fe/doBPM', '80')
-          }}>80 BPM ______</Button>
+          }}
+        >80 BPM ______
+        </Button>
       </Col>
       <Col>
         <Button
@@ -80,7 +86,9 @@ function FireTest (props) {
           id='left-bpm-button'
           onClick={() => {
             mqttPublish('asOne/fe/doBPM', lefty)
-          }}>Left BPM ({lefty})</Button>
+          }}
+        >Left BPM ({lefty})
+        </Button>
       </Col>
       <Col><Reset /></Col>
       <Col />

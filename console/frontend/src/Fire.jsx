@@ -22,7 +22,9 @@ function Fire () {
       id='fire-button'
       onClick={() => {
         postToFire()
-      }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f&nbsp;i&nbsp;r&nbsp;e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Button>
+      }}
+    >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f&nbsp;i&nbsp;r&nbsp;e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </Button>
   )
 }
 

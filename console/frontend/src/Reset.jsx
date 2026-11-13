@@ -21,7 +21,9 @@ function Reset () {
       id='reset-button'
       onClick={() => {
         postToReset()
-      }}>reset</Button>
+      }}
+    >reset
+    </Button>
   )
 }
 

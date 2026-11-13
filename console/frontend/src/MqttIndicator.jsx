@@ -10,8 +10,8 @@ function MqttIndicator (props) {
   const topic = props.topic
   const emoji = props.emoji
 
-  let [blinking, setBlinking] = useState(false)
-  let [started, setStarted] = useState(false)
+  const [blinking, setBlinking] = useState(false)
+  const [started, setStarted] = useState(false)
 
   useEffect(() => {
     async function subscribe () {

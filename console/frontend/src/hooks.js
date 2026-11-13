@@ -48,12 +48,12 @@ function useClientRect () {
 
 const DEFAULT_TINY_WIDTH_PX = 200
 function useCheckedWidth () {
-  let [checkedWidth, setCheckedWidth] = useState(DEFAULT_TINY_WIDTH_PX)
-  let [rect, ref] = useClientRect()
+  const [checkedWidth, setCheckedWidth] = useState(DEFAULT_TINY_WIDTH_PX)
+  const [rect, ref] = useClientRect()
 
   useEffect(() => {
     // tiny default so that we don't ever end up with a null screen
-    var newCheckedWidth = DEFAULT_TINY_WIDTH_PX
+    let newCheckedWidth = DEFAULT_TINY_WIDTH_PX
     if (rect) {
       newCheckedWidth = rect.width
     }

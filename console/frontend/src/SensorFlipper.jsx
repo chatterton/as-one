@@ -27,7 +27,9 @@ function SensorFlipper () {
           style={{ whiteSpace: 'nowrap' }}
           onClick={() => {
             postToFlip()
-          }}>↖️ FLIP ↗️</Button>
+          }}
+        >↖️ FLIP ↗️
+        </Button>
       </Col>
       <Col md={5} sm={0} />
     </Row>

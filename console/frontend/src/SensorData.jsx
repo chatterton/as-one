@@ -19,14 +19,14 @@ function SensorData (props) {
   const address = props.address
   const name = props.name
 
-  let [latestNow, setLatestNow] = useState((new Date()).valueOf())
-  let [data, setData] = useState(new Ring(300))
-  let [ref, checkedWidth] = useCheckedWidth()
-  let [started, setStarted] = useState(false)
-  let [position, setPosition] = useState('')
+  const [latestNow, setLatestNow] = useState((new Date()).valueOf())
+  const [data, setData] = useState(new Ring(300))
+  const [ref, checkedWidth] = useCheckedWidth()
+  const [started, setStarted] = useState(false)
+  const [position, setPosition] = useState('')
 
-  let bufferRef = useRef([])
-  let currentBuf = bufferRef.current
+  const bufferRef = useRef([])
+  const currentBuf = bufferRef.current
 
   // Move new messages from buffer into data state and clear buffer
   // Clearing is slightly unsafe, but in this application losing a reading
@@ -94,11 +94,13 @@ function SensorData (props) {
   }
 
   const dataArray = data.toArray()
-  const sum = (dataArray.length < 2) ? 1 : dataArray.map(function (value) {
-    return parseInt(value[1]) + parseInt(value[2]) + parseInt(value[3]) + parseInt(value[4])
-  }).reduce(function (accumulator, value) {
-    return accumulator + value
-  })
+  const sum = (dataArray.length < 2)
+    ? 1
+    : dataArray.map(function (value) {
+      return parseInt(value[1]) + parseInt(value[2]) + parseInt(value[3]) + parseInt(value[4])
+    }).reduce(function (accumulator, value) {
+      return accumulator + value
+    })
   const average = (dataArray.length < 2) ? 1 : (sum / dataArray.length) / 4
 
   const timeSeries = new TimeSeries({
@@ -111,16 +113,18 @@ function SensorData (props) {
 
   return (
     <div ref={ref}>
-      { (timeSeries == null) ? 'Loading ...' : (
-        <ChartContainer width={checkedWidth} timeRange={lastFewSeconds} title={position + ': ' + props.name}>
-          <ChartRow height={checkedWidth / 3} showGrid>
-            <YAxis id='axis1' min={average - GRAPH_AREA_PX} max={average + GRAPH_AREA_PX} width={28} type='linear' format='.0f' />
-            <Charts>
-              <LineChart axis='axis1' series={timeSeries} columns={['s1', 's2', 's3', 's4']} style={style} />
-            </Charts>
-          </ChartRow>
-        </ChartContainer>
-      )}
+      {(timeSeries == null)
+        ? 'Loading ...'
+        : (
+          <ChartContainer width={checkedWidth} timeRange={lastFewSeconds} title={position + ': ' + props.name}>
+            <ChartRow height={checkedWidth / 3} showGrid>
+              <YAxis id='axis1' min={average - GRAPH_AREA_PX} max={average + GRAPH_AREA_PX} width={28} type='linear' format='.0f' />
+              <Charts>
+                <LineChart axis='axis1' series={timeSeries} columns={['s1', 's2', 's3', 's4']} style={style} />
+              </Charts>
+            </ChartRow>
+          </ChartContainer>
+          )}
     </div>
   )
 }

@@ -12,7 +12,7 @@ const SENSOR_LIST_URL = '/sensors'
 function SensorMonitor (props) {
   const address = props.address
 
-  let [sensorList, setSensorList] = useState([])
+  const [sensorList, setSensorList] = useState([])
 
   async function pollServerAndUpdate () {
     try {
@@ -29,7 +29,7 @@ function SensorMonitor (props) {
 
   return (
     <Row>
-      { Object.keys(sensorList).map(sensorName =>
+      {Object.keys(sensorList).map(sensorName =>
         <Col lg={6} md key={sensorName}>
           <SensorData name={sensorName} address={address} />
         </Col>
