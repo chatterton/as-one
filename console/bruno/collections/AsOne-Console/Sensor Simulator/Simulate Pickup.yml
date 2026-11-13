@@ -1,0 +1,27 @@
+info:
+  name: Simulate Pickup
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{host}}{{simulator-path}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: '{ "newState": "pickup" }'
+  auth: inherit
+
+runtime:
+  variables:
+    - name: simulator-path
+      value: /sensors/simulated/simulator300937266
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

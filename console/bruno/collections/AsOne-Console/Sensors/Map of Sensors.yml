@@ -1,0 +1,32 @@
+info:
+  name: Map of Sensors
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{host}}/sensors"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        test("Expect successful response of a map", function () {
+            expect(res.getStatus()).to.be.within(200, 299);
+            expect(res.getHeader('Content-Type')).to.match(/^application\/json/i);
+            var check = JSON.parse(JSON.stringify(res.getBody()));
+            expect(Object.isObject(check));
+        });
+
+        var check = JSON.parse(JSON.stringify(res.getBody()));
+        bru.setGlobalEnvVar("first-sensor-name", Object.keys(check)[0]);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+docs: Map of sensor to position

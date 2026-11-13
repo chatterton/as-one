@@ -1,0 +1,31 @@
+info:
+  name: Add Simple Simulator
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{host}}/sensors/simulated/addSimple/2"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        // Make sure the creation was successful
+        test("Expect simulator to have been created", function () {
+            expect(res.getStatus()).to.equal("Created");
+        });
+
+        // Save the path for use in later requests. Not sure why
+        // neither pm.environment nor pm.variables will let this
+        // work -- it really seems to want a global :-/
+        bru.setGlobalEnvVar("simulator-path", JSON.stringify(res.getBody()));
+        bru.deleteGlobalEnvVar("variable_key");
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

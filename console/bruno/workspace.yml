@@ -1,0 +1,12 @@
+opencollection: 1.0.0
+info:
+  name: "As One"
+  type: workspace
+
+collections:
+  - name: "AsOne-Console"
+    path: "collections/AsOne-Console"
+
+specs:
+
+docs: ''

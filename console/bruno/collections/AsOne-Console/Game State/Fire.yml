@@ -1,0 +1,16 @@
+info:
+  name: Fire
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{host}}/game/fire"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

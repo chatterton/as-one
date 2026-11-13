@@ -1,0 +1,22 @@
+info:
+  name: Simulate Set Down
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{host}}{{simulator-path}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: '{ "newState": "setdown" }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
