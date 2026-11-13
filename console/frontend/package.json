@@ -4,21 +4,22 @@
   "private": true,
   "dependencies": {
     "@restart/hooks": "^0.3.8",
-    "async-mqtt": "^2.3.0",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "es6-promise": "^4.2.8",
     "konva": "^3.4.1",
-    "node-sass": "^4.12.0",
+    "mqtt": "^5.16.1",
     "pepjs": "^0.5.2",
     "pondjs": "^0.8.10",
+    "prop-types": "^15.8.1",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.10",
     "react-dom": "^16.8.6",
     "react-konva": "^16.8.7-3",
-    "react-scripts": "3.0.1",
+    "react-scripts": "5.0.1",
     "react-timeseries-charts": "^0.16.1",
-    "ringjs": "0.0.1"
+    "ringjs": "0.0.1",
+    "sass": "^1.80.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -45,9 +46,7 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "eslint-plugin-react": "^7.14.3",
-    "standard": "^12.0.1"
+    "standard": "^17.1.0"
   },
   "standard": {
     "env": {
