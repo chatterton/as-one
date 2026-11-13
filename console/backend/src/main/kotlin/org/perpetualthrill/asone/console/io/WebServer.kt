@@ -28,6 +28,7 @@ import javax.inject.Singleton
 import kotlin.system.exitProcess
 
 @KtorExperimentalLocationsAPI
+@ExperimentalUnsignedTypes
 @Singleton
 class WebServer
 @Inject

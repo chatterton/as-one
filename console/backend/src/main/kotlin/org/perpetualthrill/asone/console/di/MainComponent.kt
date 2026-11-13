@@ -5,6 +5,7 @@ import org.perpetualthrill.asone.console.Console
 import org.perpetualthrill.asone.console.model.SensorSimulator
 import javax.inject.Singleton
 
+@kotlin.ExperimentalUnsignedTypes
 @Singleton
 @Component(modules = [MainModule::class])
 interface MainComponent {

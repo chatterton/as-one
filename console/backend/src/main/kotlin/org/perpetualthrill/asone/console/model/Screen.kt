@@ -30,6 +30,7 @@ data class Rect(
     val height: Int
 )
 
+@kotlin.ExperimentalUnsignedTypes
 data class Screen(
     val screenArray: Array<Array<Color>> = arrayOf()
 ) {

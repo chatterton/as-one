@@ -16,6 +16,7 @@ import javax.inject.Singleton
 private val SENSOR_READING_BUFFER_TIME = 5.seconds
 private val SENSOR_READING_SAMPLE_SIZE = (SENSOR_READING_BUFFER_TIME.longValue / SENSOR_UPDATE_INTERVAL.longValue).toInt()
 
+@ExperimentalUnsignedTypes
 @Singleton
 class SensorState
 @Inject

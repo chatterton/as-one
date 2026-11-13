@@ -30,6 +30,7 @@ private const val BPM_BUFFER_SIZE = 10
 private const val BOGUS_LEFT = 199
 private const val BOGUS_RIGHT = 188
 
+@ExperimentalUnsignedTypes
 @Singleton
 class GameState
 @Inject

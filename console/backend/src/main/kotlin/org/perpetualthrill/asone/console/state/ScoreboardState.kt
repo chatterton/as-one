@@ -20,6 +20,7 @@ private val SCOREBOARD_DISCONNECT_THRESHOLD = 2500.microseconds
 const val SCOREBOARD_UPDATE_FPS = 24
 private val SCOREBOARD_UPDATE_INTERVAL = 1000.microseconds / SCOREBOARD_UPDATE_FPS
 
+@ExperimentalUnsignedTypes
 @Singleton
 class ScoreboardState
 @Inject

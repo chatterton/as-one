@@ -20,11 +20,12 @@ import org.perpetualthrill.asone.console.util.subscribeWithErrorLogging
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
+@ExperimentalUnsignedTypes
 class Console : CliktCommand() {
 
     @Inject lateinit var serialMonitor: SerialMonitor
     @Inject lateinit var sensorState: SensorState
+    @io.ktor.locations.KtorExperimentalLocationsAPI
     @Inject lateinit var webServer: WebServer
     @Inject lateinit var mqttManager: MqttManager
     @Inject lateinit var scoreboardState: ScoreboardState
@@ -43,13 +44,15 @@ class Console : CliktCommand() {
         mainComponent.inject(this)
     }
 
+    @io.ktor.locations.KtorExperimentalLocationsAPI
     override fun run() {
         if (!disableSerialArgument) {
             serialMonitor.start()
-            if (!usbArgument.isNullOrBlank()) {
+            if (usbArgument.isNotBlank()) {
                 serialMonitor.addSensorAddress(usbArgument)
             }
         }
+
         webServer.start(hostName = hostArgument)
         sensorState.start()
         mqttManager.start(hostName = hostArgument)
@@ -77,6 +80,7 @@ class Console : CliktCommand() {
 
 }
 
+@ExperimentalUnsignedTypes
 fun main(args: Array<String>) {
     Console().main(args)
 }
