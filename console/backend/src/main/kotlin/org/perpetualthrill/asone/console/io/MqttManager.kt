@@ -3,6 +3,7 @@ package org.perpetualthrill.asone.console.io
 import io.reactivex.Observable
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions.MQTT_VERSION_3_1_1
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import org.perpetualthrill.asone.console.util.logInfo
 import org.perpetualthrill.asone.console.util.subscribeWithErrorLogging
 import java.util.concurrent.TimeUnit
@@ -51,7 +52,7 @@ constructor() {
     fun start(hostName: String) {
         if (started) return // Multiple starts = not good
 
-        client = MqttAsyncClient("tcp://$hostName:1883", "console")
+        client = MqttAsyncClient("tcp://$hostName:1883", "console", MemoryPersistence())
         val options = MqttConnectOptions().apply {
             isCleanSession = true // do not send this client old stuff
             keepAliveInterval = 15 // keepalive call time for quiet connection in seconds
