@@ -16,43 +16,30 @@
     "react-bootstrap": "^1.0.0-beta.10",
     "react-dom": "^16.8.6",
     "react-konva": "^16.8.7-3",
-    "react-scripts": "5.0.1",
     "react-timeseries-charts": "^0.16.1",
     "ringjs": "0.0.1",
     "sass": "^1.80.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "serve": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "serve": "vite",
+    "build": "NODE_ENV=production vite build",
+    "preview": "vite preview",
+    "test": "vitest",
     "standardize": "standard --fix",
-    "make-static": "standard --fix; react-scripts build; rm -r ../backend/src/main/resources/web-static/*; cp -r ./build/* ../backend/src/main/resources/web-static/"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "make-static": "standard --fix; NODE_ENV=production vite build; rm -r ../backend/src/main/resources/web-static/*; cp -r ./build/* ../backend/src/main/resources/web-static/"
   },
   "devDependencies": {
-    "standard": "^17.1.0"
+    "@vitejs/plugin-react": "^6.3.0",
+    "jsdom": "^31.0.1",
+    "standard": "^17.1.0",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   },
   "standard": {
     "env": {
       "mocha": true
     }
   },
-  "_comment": "specify ip address when running with As One access point / local network. otherwise localhost",
-  "proxy": "http://192.168.12.1:12345/"
+  "type": "module"
 }
