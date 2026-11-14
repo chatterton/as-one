@@ -17,7 +17,6 @@ function SensorFlipper () {
     }
   }
 
-  /* eslint-disable jsx-a11y/accessible-emoji */
   return (
     <Row>
       <Col md={5} sm={0} />
@@ -34,7 +33,6 @@ function SensorFlipper () {
       <Col md={5} sm={0} />
     </Row>
   )
-  /* eslint-enable jsx-a11y/accessible-emoji */
 }
 
 export { SensorFlipper }
