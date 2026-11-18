@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import axios from 'axios'
 import logger from './logger'
 
@@ -24,24 +24,33 @@ function useFetch (url) {
   return [data, loading]
 }
 
-// via https://reactjs.org/docs/hooks-faq.html#how-can-i-measure-a-dom-node
-// hacked to attend to window resize events
+// use ResizeObserver rather than window resize events, so the rect also
+// updates when the element itself changes size without the window changing,
+// e.g. when a collapsed (display: none) parent is opened
 function useClientRect () {
   const [rect, setRect] = useState(null)
+  const observerRef = useRef(null)
 
   const ref = useCallback(node => {
+    // clean up connection when fed a null node
+    if (node === null && observerRef.current) {
+      observerRef.current.disconnect()
+      observerRef.current = null
+      return
+    }
+
     function update () {
-      if (node !== null) {
-        console.log('SETRECT: width ' + node.getBoundingClientRect().width + ' height: '+node.getBoundingClientRect().height)
-        setRect(node.getBoundingClientRect())
+      const newRect = node.getBoundingClientRect()
+      // a hidden element measures 0x0. keep the last good rect rather than
+      // shrinking whatever is rendered inside to nothing if necessary
+      if (newRect.width > 0) {
+        setRect(newRect)
       }
     }
-    window.addEventListener('resize', update)
-    update()
 
-    return () => {
-      window.removeEventListener('resize', update)
-    }
+    const observer = new window.ResizeObserver(update)
+    observer.observe(node)
+    observerRef.current = observer
   }, [])
 
   return [rect, ref]
@@ -59,7 +68,7 @@ function useCheckedWidth () {
       newCheckedWidth = rect.width
     }
     setCheckedWidth(newCheckedWidth)
-  }, [rect, checkedWidth])
+  }, [rect])
 
   return [ref, checkedWidth, setCheckedWidth]
 }

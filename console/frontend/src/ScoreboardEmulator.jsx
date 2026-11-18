@@ -107,8 +107,6 @@ function ScoreboardEmulator (props) {
     setBoard(screen)
   }, [checkedWidth])
 
-  //console.log("scoreboardemu checkedwidth: "+checkedWidth)
-
   return (
     <div ref={ref}>
       <Stage width={checkedWidth} height={checkedWidth / 3}>

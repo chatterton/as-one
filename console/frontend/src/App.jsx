@@ -24,7 +24,7 @@ function App () {
 
   return (
     <div className='App'>
-      <Container fluid='true'>
+      <Container fluid>
         <Row>
           <Col md={0} lg={1} />
           <Col md={12} lg={10}>
@@ -77,7 +77,9 @@ function App () {
         {spacer}
         <Row>
           <Col md={0} lg={1} />
-          <Col>
+          {/* flex items default to min-width:auto, so without this a wide canvas holds
+              the column wide and gets remeasured and the column never shrinks back */}
+          <Col style={{ minWidth: 0 }}>
             <div className='card' style={{ backgroundColor: GREYISH_BLACK }}>
               <h4 className='card-header'>
                 <a href='#/' onClick={() => setScoreboardOpen(!scoreboardOpen)}>
