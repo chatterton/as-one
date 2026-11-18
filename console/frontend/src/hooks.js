@@ -19,7 +19,7 @@ function useFetch (url) {
       }
     }
 
-    fetchUrl()
+    fetchUrl().then()
   }, [url])
   return [data, loading]
 }
@@ -32,6 +32,7 @@ function useClientRect () {
   const ref = useCallback(node => {
     function update () {
       if (node !== null) {
+        console.log('SETRECT: width ' + node.getBoundingClientRect().width + ' height: '+node.getBoundingClientRect().height)
         setRect(node.getBoundingClientRect())
       }
     }

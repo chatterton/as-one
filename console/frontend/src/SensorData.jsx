@@ -111,6 +111,8 @@ function SensorData (props) {
 
   const lastFewSeconds = new TimeRange(latestNow - 5000, latestNow)
 
+  //console.log("sensordata checkedwidth: "+checkedWidth)
+
   return (
     <div ref={ref}>
       {(timeSeries == null)
