@@ -4,8 +4,8 @@ import 'pepjs'
 import { SensorMonitor } from './SensorMonitor'
 import { MqttIndicator } from './MqttIndicator'
 import { FireTest } from './FireTest'
-// import { ScoreboardEmulator, GREYISH_BLACK } from './ScoreboardEmulator'
-import { GREYISH_BLACK } from './ScoreboardEmulator'
+import { ScoreboardEmulator, GREYISH_BLACK } from './ScoreboardEmulator'
+// import { GREYISH_BLACK } from './ScoreboardEmulator'
 import { Fire } from './Fire'
 
 import Container from 'react-bootstrap/Container'
@@ -24,7 +24,7 @@ function App () {
 
   return (
     <div className='App'>
-      <Container fluid='true'>
+      <Container fluid>
         <Row>
           <Col md={0} lg={1} />
           <Col md={12} lg={10}>
@@ -77,7 +77,9 @@ function App () {
         {spacer}
         <Row>
           <Col md={0} lg={1} />
-          <Col>
+          {/* flex items default to min-width:auto, so without this a wide canvas holds
+              the column wide and gets remeasured and the column never shrinks back */}
+          <Col style={{ minWidth: 0 }}>
             <div className='card' style={{ backgroundColor: GREYISH_BLACK }}>
               <h4 className='card-header'>
                 <a href='#/' onClick={() => setScoreboardOpen(!scoreboardOpen)}>
@@ -87,8 +89,8 @@ function App () {
               </h4>
               <Collapse in={scoreboardOpen}>
                 <div className='card-body'>
-                  {/* <div className='card-text'><ScoreboardEmulator address={mqttAddress} /></div> */}
-                  <div className='card-text'>Scoreboard currently commented out for mobile performance <span role='img' aria-label='oh noes!'>😮</span></div>
+                  <div className='card-text'><ScoreboardEmulator address={mqttAddress} /></div>
+                  {/* <div className='card-text'>Scoreboard currently commented out for mobile performance <span role='img' aria-label='oh noes!'>😮</span></div> */}
                 </div>
               </Collapse>
             </div>

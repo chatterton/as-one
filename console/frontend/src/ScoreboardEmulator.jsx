@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import logger from './logger'
 import PropTypes from 'prop-types'
-import { Stage, Layer, Rect } from 'react-konva'
+import { Layer, Rect, Stage } from 'react-konva'
 import { useCheckedWidth } from './hooks'
 import scoreboardAddressTable from './scoreboard-lookup.json'
 import MQTT from 'mqtt'
@@ -46,8 +46,9 @@ function ScoreboardEmulator (props) {
         setLeds(message)
       })
     }
+
     if (!started) {
-      subscribe()
+      subscribe().then()
       setStarted(true)
     }
   }, [started, address])
@@ -73,7 +74,7 @@ function ScoreboardEmulator (props) {
       processedArray.map(function (value, index) {
         const x = scoreboardAddressTable[index].x
         const y = scoreboardAddressTable[index].y
-        const replacement = (
+        board[x][y] = (
           <Rect
             x={pixelSize * x}
             y={pixelSize * y}
@@ -83,7 +84,6 @@ function ScoreboardEmulator (props) {
             key={_locationToKey(x, y)}
           />
         )
-        board[x][y] = replacement
         return value
       })
       setBoard(board)
