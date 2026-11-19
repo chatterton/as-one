@@ -13,7 +13,6 @@ const GREYISH_BLACK = '#222222'
 function ScoreboardEmulator (props) {
   const address = props.address
 
-  const [started, setStarted] = useState(false)
   const [leds, setLeds] = useState([])
   const [board, setBoard] = useState([])
   const [ref, checkedWidth] = useCheckedWidth()
@@ -32,63 +31,21 @@ function ScoreboardEmulator (props) {
 
   // Should run only at mount time
   useEffect(() => {
-    async function subscribe () {
-      const mqtt = MQTT.connect(address)
-      try {
-        await mqtt.subscribeAsync('asOne/score/all/direct')
-        logger.log('subscribed scoreboardemulator')
-      } catch (e) {
+    const mqtt = MQTT.connect(address)
+    mqtt.subscribeAsync('asOne/score/all/direct')
+      .then(() => logger.log('subscribed scoreboardemulator'))
+      .catch(err => {
         logger.error('error connecting to mqtt')
-        logger.error(e)
-      }
-
-      mqtt.on('message', function (_, message) {
-        setLeds(message)
+        logger.error(err)
       })
-    }
 
-    if (!started) {
-      subscribe().then()
-      setStarted(true)
-    }
-  }, [started, address])
+    mqtt.on('message', function (_, message) {
+      setLeds(message)
+    })
 
-  // Runs whenever new raw values are set. Updates the existing screen
-  useEffect(() => {
-    if (leds) {
-      // First, process the incoming rgb values into an array of hex triplets
-      const processedArray = []
-      for (let i = 0; i < leds.length; i += 3) {
-        const brightnessPercentage = (leds[i] + leds[i + 1] + leds[i + 2]) / (255 * 3)
-        // Magic number threshold below which the pixel will be shown as dim grey
-        if (brightnessPercentage > 0.1) {
-          const newColor = _rgbToHex(leds[i], leds[i + 1], leds[i + 2])
-          processedArray.push(newColor)
-        } else {
-          processedArray.push(GREYISH_BLACK)
-        }
-      }
-
-      // Then, use those to update the board
-      const pixelSize = _pixelSize(checkedWidth)
-      processedArray.map(function (value, index) {
-        const x = scoreboardAddressTable[index].x
-        const y = scoreboardAddressTable[index].y
-        board[x][y] = (
-          <Rect
-            x={pixelSize * x}
-            y={pixelSize * y}
-            width={pixelSize}
-            height={pixelSize}
-            fill={value}
-            key={_locationToKey(x, y)}
-          />
-        )
-        return value
-      })
-      setBoard(board)
-    }
-  }, [leds, board, checkedWidth])
+    // gets fired when this is unmounted, closing the mqtt connection
+    return () => mqtt.end(true)
+  }, [address])
 
   // Runs whenever the screen is resized. Sets the width we're rendering to
   // and creates a screen using that size
@@ -106,6 +63,38 @@ function ScoreboardEmulator (props) {
     }
     setBoard(screen)
   }, [checkedWidth])
+
+  // Runs whenever new raw values are set. Updates the existing screen
+  useEffect(() => {
+    // First, process the incoming rgb values into an array of hex triplets
+    const processedArray = []
+    for (let i = 0; i < leds.length; i += 3) {
+      const brightnessPercentage = (leds[i] + leds[i + 1] + leds[i + 2]) / (255 * 3)
+      // Magic number threshold below which the pixel will be shown as dim grey
+      if (brightnessPercentage > 0.1) {
+        const newColor = _rgbToHex(leds[i], leds[i + 1], leds[i + 2])
+        processedArray.push(newColor)
+      } else {
+        processedArray.push(GREYISH_BLACK)
+      }
+    }
+
+    // Then, use those to update the board
+    const pixelSize = _pixelSize(checkedWidth)
+    setBoard(prev => {
+      const next = prev.map(column => column.slice())
+      processedArray.forEach((value, index) => {
+        const { x, y } = scoreboardAddressTable[index]
+        next[x][y] = (
+          <Rect
+            x={pixelSize * x} y={pixelSize * y} width={pixelSize} height={pixelSize}
+            fill={value} key={_locationToKey(x, y)}
+          />
+        )
+      })
+      return next
+    })
+  }, [leds, checkedWidth])
 
   return (
     <div ref={ref}>

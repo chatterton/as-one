@@ -63,7 +63,7 @@ function App () {
                   <span className='float-right'>▼</span>
                 </a>
               </h4>
-              <Collapse in={sensorMonitorOpen}>
+              <Collapse in={sensorMonitorOpen} mountOnEnter unmountOnExit>
                 <div className='card-body'>
                   <div className='card-text'>
                     <SensorMonitor address={mqttAddress} />
@@ -87,10 +87,9 @@ function App () {
                   <span className='float-right'>▼</span>
                 </a>
               </h4>
-              <Collapse in={scoreboardOpen}>
+              <Collapse in={scoreboardOpen} mountOnEnter unmountOnExit>
                 <div className='card-body'>
                   <div className='card-text'><ScoreboardEmulator address={mqttAddress} /></div>
-                  {/* <div className='card-text'>Scoreboard currently commented out for mobile performance <span role='img' aria-label='oh noes!'>😮</span></div> */}
                 </div>
               </Collapse>
             </div>

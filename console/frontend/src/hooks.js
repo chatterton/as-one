@@ -33,9 +33,11 @@ function useClientRect () {
 
   const ref = useCallback(node => {
     // clean up connection when fed a null node
-    if (node === null && observerRef.current) {
-      observerRef.current.disconnect()
-      observerRef.current = null
+    if (node === null) {
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+        observerRef.current = null
+      }
       return
     }
 

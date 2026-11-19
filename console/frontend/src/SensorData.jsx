@@ -22,7 +22,6 @@ function SensorData (props) {
   const [latestNow, setLatestNow] = useState((new Date()).valueOf())
   const [data, setData] = useState(new Ring(300))
   const [ref, checkedWidth] = useCheckedWidth()
-  const [started, setStarted] = useState(false)
   const [position, setPosition] = useState('')
 
   const bufferRef = useRef([])
@@ -43,36 +42,26 @@ function SensorData (props) {
   // Initializer. Should only run at mount, but contains a message handler
   // that pushes all of the state updates into the buffer
   useEffect(() => {
-    async function subscribe () {
-      const mqtt = MQTT.connect(address)
-      try {
-        await mqtt.subscribeAsync('asOne/sensor/reading')
-        logger.log('subscribed sensormonitor')
-      } catch (e) {
+    const mqtt = MQTT.connect(address)
+    mqtt.subscribeAsync('asOne/sensor/reading')
+      .then(() => logger.log('subscribed sensor monitor'))
+      .catch(e => {
         logger.error('error connecting to mqtt')
         logger.error(e)
-      }
-
-      mqtt.on('message', (_, message) => {
-        if (message == null) return
-        const msgString = message.toString()
-        if (!msgString.startsWith(name)) return
-        const reading = msgString.split(',')
-        const point = [parseInt(reading[5]), reading[1], reading[2], reading[3], reading[4]]
-        currentBuf.push(point)
-        setPosition(reading[6])
       })
 
-      return () => {
-        if (mqtt.close) mqtt.close()
-      }
-    }
+    mqtt.on('message', (_, message) => {
+      if (message == null) return
+      const msgString = message.toString()
+      if (!msgString.startsWith(name)) return
+      const reading = msgString.split(',')
+      const point = [parseInt(reading[5]), reading[1], reading[2], reading[3], reading[4]]
+      currentBuf.push(point)
+      setPosition(reading[6])
+    })
 
-    if (!started) {
-      subscribe()
-      setStarted(true)
-    }
-  }, [started, address, currentBuf, name, setPosition])
+    return () => mqtt.end(true)
+  }, [address, currentBuf, name, setPosition])
 
   const style = {
     s1: {
