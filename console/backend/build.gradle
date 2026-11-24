@@ -1,24 +1,28 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.0.21'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'org.jetbrains.kotlin.kapt' version '2.0.21'
+    id 'org.jetbrains.kotlin.jvm' version '2.4.21'
+    id 'com.gradleup.shadow' version '9.6.1'
+    id 'org.jetbrains.kotlin.kapt' version '2.4.21'
     id 'application'
     // provides 'gradle dependencyUpdates'
-    id 'com.github.ben-manes.versions' version '0.54.0'
+    id 'io.github.ben-manes.versions' version '0.67.0'
+}
+
+// Compile with JDK 25 and emit Java 25 bytecode, regardless of which JDK
+// happens to be running Gradle (IntelliJ, jenv, the deploy box, etc.)
+kotlin {
+    jvmToolchain(25)
 }
 
 application {
     mainClass = 'org.perpetualthrill.asone.console.ConsoleStatic'
 }
 
-group 'org.perpetualthrill.asone.console'
-version '0.1'
+group = 'org.perpetualthrill.asone.console'
+version = '0.1'
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
 }
 
 // Thanks, IDEA. How come the preprocessor runs automagically in Android
@@ -40,23 +44,24 @@ tasks.named('dependencyUpdates').configure {
     rejectVersionIf { isNonStable(it.candidate.version) }
 }
 
-// get current git hash, i.e. to reproduce the build
-def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
+// get current git hash, i.e. to reproduce the build. providers.exec runs
+// lazily and is configuration-cache safe, unlike a plain exec {} here
+def gitHash = providers.exec {
+    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+}.standardOutput.asText.map { it.trim() }
 
 // Add git commit to build for repeatability purposes
 shadowJar {
-    archiveAppendix = getGitHash()
+    archiveAppendix = gitHash
     manifest {
         // JDK 24+ warns when JNI libraries (jSerialComm) load without this.
         // Only honored when launched via `java -jar`; ignored by older JVMs.
         attributes 'Enable-Native-Access': 'ALL-UNNAMED'
+    }
+    // Let shadow's Kotlin module metadata transformer see every
+    // *.kotlin_module file instead of warning that some may be dropped
+    filesMatching('META-INF/*.kotlin_module') {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }
 

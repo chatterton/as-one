@@ -10,7 +10,7 @@ The console hardware includes a wireless card acting as the AP for the project. 
 
 ### Backend development
 
-The server code is written in Kotlin and located in the [console/backend/](./console/backend/) directory. To compile it, type './gradlew shadowJar' in that directory, which will assemble a fat jar containing all dependencies. The current static version of the frontend code is also included. To run that jar, do `java -jar build/libs/AsOne-Console-abc123-0.1-all.jar`, substituting the git hash from the actual filename for abc123. If this is successful, you will be able to access the running server at [http://localhost:12345/](http://localhost:12345/).
+The server code is written in Kotlin and located in the [console/backend/](./console/backend/) directory. Building and running it requires Java 25. To compile it, type './gradlew shadowJar' in that directory, which will assemble a fat jar containing all dependencies. The current static version of the frontend code is also included. To run that jar, do `java -jar build/libs/AsOne-Console-abc123-0.1-all.jar`, substituting the git hash from the actual filename for abc123. If this is successful, you will be able to access the running server at [http://localhost:12345/](http://localhost:12345/).
 
 A JSON-encoded ordered list of the last 100 sensor readings can be read at via GET request to `/sensors/latest`
 
