@@ -8,11 +8,6 @@ http:
   url: "{{host}}{{simulator-path}}"
   auth: inherit
 
-runtime:
-  variables:
-    - name: simulator-path
-      value: /sensors/simulated/simulator300937266
-
 settings:
   encodeUrl: true
   timeout: 0

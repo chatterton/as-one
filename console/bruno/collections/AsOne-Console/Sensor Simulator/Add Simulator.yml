@@ -17,11 +17,8 @@ runtime:
             expect(res.getStatus()).to.equal("Created");
         });
 
-        // Save the path for use in later requests. Not sure why
-        // neither pm.environment nor pm.variables will let this
-        // work -- it really seems to want a global :-/
-        bru.setGlobalEnvVar("simulator-path", JSON.stringify(res.getBody()));
-        bru.deleteGlobalEnvVar("variable_key");
+        // Save the path for use in later requests
+        bru.setVar("simulator-path", res.getBody());
 
 settings:
   encodeUrl: true

@@ -14,11 +14,6 @@ http:
     data: '{ "newState": "pickup" }'
   auth: inherit
 
-runtime:
-  variables:
-    - name: simulator-path
-      value: /sensors/simulated/simulator300937266
-
 settings:
   encodeUrl: true
   timeout: 0
