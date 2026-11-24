@@ -37,11 +37,12 @@ constructor() {
     private val mqttMessageCallback = object : MqttCallback {
         override fun messageArrived(topic: String, msg: MqttMessage) {
             val list = listeners[topic]
-            list?.map { it.handler(msg.payload) }
+            list?.forEach { it.handler(msg.payload) }
         }
 
         override fun connectionLost(cause: Throwable) {
-            logInfo("connection lost: ${cause.stackTrace}")
+            print(cause.stackTraceToString())
+            logInfo("connection lost: $cause")
         }
 
         override fun deliveryComplete(token: IMqttDeliveryToken?) {
@@ -64,7 +65,7 @@ constructor() {
         client?.connect(options, asyncActionListener)
 
         Observable
-            .interval(500, TimeUnit.MILLISECONDS)
+            .interval(1000, TimeUnit.MILLISECONDS)
             .subscribeWithErrorLogging(this) {
                 val c = client
                 if (null != c) {
