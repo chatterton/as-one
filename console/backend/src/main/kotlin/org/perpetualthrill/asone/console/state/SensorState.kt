@@ -14,7 +14,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private val SENSOR_READING_BUFFER_TIME = 5.seconds
-private val SENSOR_READING_SAMPLE_SIZE = (SENSOR_READING_BUFFER_TIME.longValue / SENSOR_UPDATE_INTERVAL.longValue).toInt()
+// longValue is in each interval's own unit, so convert both to ms and divide
+private val SENSOR_READING_SAMPLE_SIZE =
+    (SENSOR_READING_BUFFER_TIME.inMilliseconds.longValue / SENSOR_UPDATE_INTERVAL.inMilliseconds.longValue).toInt()
 
 @ExperimentalUnsignedTypes
 @Singleton
