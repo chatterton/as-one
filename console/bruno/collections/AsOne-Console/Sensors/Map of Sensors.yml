@@ -15,12 +15,14 @@ runtime:
         test("Expect successful response of a map", function () {
             expect(res.getStatus()).to.be.within(200, 299);
             expect(res.getHeader('Content-Type')).to.match(/^application\/json/i);
-            var check = JSON.parse(JSON.stringify(res.getBody()));
-            expect(Object.isObject(check));
+            expect(res.getBody()).to.be.an('object');
         });
 
-        var check = JSON.parse(JSON.stringify(res.getBody()));
-        bru.setGlobalEnvVar("first-sensor-name", Object.keys(check)[0]);
+        // save a sensor name for use elsewhere if needed
+        var sensorNames = Object.keys(res.getBody() || {});
+        if (sensorNames.length > 0) {
+            bru.setVar("first-sensor-name", sensorNames[0]);
+        }
 
 settings:
   encodeUrl: true

@@ -9,17 +9,13 @@ http:
   auth: inherit
 
 runtime:
-  variables:
-    - name: first-sensor-name
-      value: simulator1164961333
   scripts:
     - type: after-response
       code: |-
         test("Expect successful response of a json array", function () {
             expect(res.getStatus()).to.be.within(200, 299);
             expect(res.getHeader('Content-Type')).to.match(/^application\/json/i);
-            var check = JSON.parse(JSON.stringify(res.getBody()));
-            expect(Array.isArray(check));
+            expect(res.getBody()).to.be.an('array');
         });
 
 settings:
