@@ -6,6 +6,18 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "console/frontend", "run", "start"],
       "port": 3000
+    },
+    {
+      "name": "backend-jdk8",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "exec \"$(/usr/libexec/java_home -v 1.8)/bin/java\" -jar console/backend/build/libs/AsOne-Console-*-all.jar --disable-serial --hostname localhost"],
+      "port": 12345
+    },
+    {
+      "name": "backend-jdk25",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "exec \"$(/usr/libexec/java_home -v 25)/bin/java\" -jar console/backend/build/libs/AsOne-Console-*-all.jar --disable-serial --hostname localhost"],
+      "port": 12345
     }
   ]
 }

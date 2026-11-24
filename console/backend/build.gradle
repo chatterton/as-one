@@ -42,6 +42,11 @@ def getGitHash = { ->
 // Add git commit to build for repeatability purposes
 shadowJar {
     archiveAppendix = getGitHash()
+    manifest {
+        // JDK 24+ warns when JNI libraries (jSerialComm) load without this.
+        // Only honored when launched via `java -jar`; ignored by older JVMs.
+        attributes 'Enable-Native-Access': 'ALL-UNNAMED'
+    }
 }
 
 configurations.all {

@@ -31,9 +31,9 @@ class Sensor(val name: String) {
         pruneTask = Observable
             .interval(PRUNE_READINGS_INTERVAL_MS, TimeUnit.MILLISECONDS)
             .subscribeWithErrorLogging(this) {
-                val retainPeriodEnd = Instant.now().minusMillis(RETAIN_PERIOD_MS)
+                val retainPeriodEnd = System.currentTimeMillis() - RETAIN_PERIOD_MS
                 readings.removeIf {
-                    it.timestamp.isBefore(retainPeriodEnd)
+                    it.timestamp < retainPeriodEnd
                 }
             }
     }
@@ -47,15 +47,15 @@ class Sensor(val name: String) {
     @Throws(RuntimeException::class) // parser errors
     fun readingFromSerialInput(input: String): Reading {
         val tokens = input.split(",")
-        val timestamp = Instant.now()
-        lastReading = timestamp
+        val now = Instant.now()
+        lastReading = now
         val reading = Reading(
             sensorName = name,
             s1 = tokens[0].toInt(),
             s2 = tokens[1].toInt(),
             s3 = tokens[2].toInt(),
             s4 = tokens[3].toInt(),
-            timestamp = timestamp
+            timestamp = now.toEpochMilli()
         )
         readings.addFirst(reading)
         return reading
@@ -77,14 +77,14 @@ class Sensor(val name: String) {
         val s2: Int,
         val s3: Int,
         val s4: Int,
-        val timestamp: Instant = Instant.now()
+        val timestamp: Long = System.currentTimeMillis()
     ) {
         override fun toString(): String {
-            return "Sensor reading for $sensorName: $s1 $s2 $s3 $s4 at $timestamp"
+            return "Sensor reading for $sensorName: $s1 $s2 $s3 $s4 at ${Instant.ofEpochMilli(timestamp)}"
         }
 
         fun toCSVString(): String {
-            return "$sensorName,$s1,$s2,$s3,$s4,${timestamp.toEpochMilli()}"
+            return "$sensorName,$s1,$s2,$s3,$s4,$timestamp"
         }
 
         val asArray = arrayOf(s1, s2, s3, s4)
