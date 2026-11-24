@@ -14,29 +14,38 @@ SensorData.propTypes = {
 }
 
 const GRAPH_AREA_PX = 125
+const RING_SIZE = 300
 
 function SensorData (props) {
   const address = props.address
   const name = props.name
 
   const [latestNow, setLatestNow] = useState((new Date()).valueOf())
-  const [data, setData] = useState(new Ring(300))
   const [ref, checkedWidth] = useCheckedWidth()
   const [position, setPosition] = useState('')
 
+  // use ref rather than state. useInterval is going to update the display
+  // so there is not a good reason to force another potential update whenever
+  // the buffer changes
+  const ringRef = useRef(new Ring(RING_SIZE))
+  const lastTimeRef = useRef(-Infinity)
   const bufferRef = useRef([])
   const currentBuf = bufferRef.current
 
-  // Move new messages from buffer into data state and clear buffer
-  // Clearing is slightly unsafe, but in this application losing a reading
-  // or two is not a big deal
   useInterval(() => {
-    setData(dataref => {
-      currentBuf.map(reading => dataref.push(reading))
-      return dataref
-    })
+    const pending = currentBuf.splice(0, currentBuf.length)
+    const ring = ringRef.current
+    for (const point of pending) {
+      if (!Number.isFinite(point[0])) continue // malformed timestamp
+      if (point[0] < lastTimeRef.current) {
+        // timestamps out of order, a rare thing sent by the server from time to time
+        logger.log(`sensor ${name}: non-chronological reading (${point[0]} < ${lastTimeRef.current}), skipping`)
+        continue
+      }
+      ring.push(point)
+      lastTimeRef.current = point[0]
+    }
     setLatestNow((new Date()).valueOf())
-    currentBuf.length = 0 // javascript you so crazy
   }, 100)
 
   // Initializer. Should only run at mount, but contains a message handler
@@ -53,8 +62,8 @@ function SensorData (props) {
     mqtt.on('message', (_, message) => {
       if (message == null) return
       const msgString = message.toString()
-      if (!msgString.startsWith(name)) return
       const reading = msgString.split(',')
+      if (reading[0] !== name) return
       const point = [parseInt(reading[5]), reading[1], reading[2], reading[3], reading[4]]
       currentBuf.push(point)
       setPosition(reading[6])
@@ -82,7 +91,7 @@ function SensorData (props) {
     }
   }
 
-  const dataArray = data.toArray()
+  const dataArray = ringRef.current.toArray()
   const sum = (dataArray.length < 2)
     ? 1
     : dataArray.map(function (value) {
