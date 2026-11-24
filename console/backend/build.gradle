@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.7.21'
-    id 'com.github.johnrengelman.shadow' version '5.1.0'
-    id 'org.jetbrains.kotlin.kapt' version '1.7.21'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.21'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.jetbrains.kotlin.kapt' version '2.0.21'
     id 'application'
-    // provides 'gradle checkUpdates'
-    id 'name.remal.check-updates' version '1.0.151'
+    // provides 'gradle dependencyUpdates'
+    id 'com.github.ben-manes.versions' version '0.54.0'
 }
 
 application {
-    mainClassName = 'org.perpetualthrill.asone.console.ConsoleStatic'
+    mainClass = 'org.perpetualthrill.asone.console.ConsoleStatic'
 }
 
 group 'org.perpetualthrill.asone.console'
@@ -27,6 +27,17 @@ tasks.register('rebuildAndRun') {
     dependsOn 'classes'
     dependsOn 'run'
     tasks.findByName('run').mustRunAfter 'classes'
+}
+
+// only suggest stable releases from 'gradle dependencyUpdates'
+// via ben-manes/gradle-versions-plugin README
+def isNonStable = { String version ->
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { version.toUpperCase().contains(it) }
+    def regex = /^[0-9,.v-]+(-r)?$/
+    return !stableKeyword && !(version ==~ regex)
+}
+tasks.named('dependencyUpdates').configure {
+    rejectVersionIf { isNonStable(it.candidate.version) }
 }
 
 // get current git hash, i.e. to reproduce the build
@@ -67,7 +78,6 @@ ext {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
     implementation 'com.fazecast:jSerialComm:2.11.4'
     implementation 'ch.qos.logback:logback-classic:1.2.3' // secretly this is also slf4j

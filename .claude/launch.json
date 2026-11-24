@@ -10,13 +10,13 @@
     {
       "name": "backend-jdk8",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "exec \"$(/usr/libexec/java_home -v 1.8)/bin/java\" -jar console/backend/build/libs/AsOne-Console-*-all.jar --disable-serial --hostname localhost"],
+      "runtimeArgs": ["-c", "exec \"$(/usr/libexec/java_home -v 1.8)/bin/java\" -jar \"$(ls -t console/backend/build/libs/AsOne-Console-*-all.jar | head -1)\" --disable-serial --hostname localhost"],
       "port": 12345
     },
     {
       "name": "backend-jdk25",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "exec \"$(/usr/libexec/java_home -v 25)/bin/java\" -jar console/backend/build/libs/AsOne-Console-*-all.jar --disable-serial --hostname localhost"],
+      "runtimeArgs": ["-c", "exec \"$(/usr/libexec/java_home -v 25)/bin/java\" -jar \"$(ls -t console/backend/build/libs/AsOne-Console-*-all.jar | head -1)\" --disable-serial --hostname localhost"],
       "port": 12345
     }
   ]
