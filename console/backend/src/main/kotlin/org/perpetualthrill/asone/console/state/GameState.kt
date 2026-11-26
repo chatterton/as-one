@@ -43,8 +43,17 @@ constructor(
     private var leftBPM: Int = BOGUS_LEFT
     private var rightBPM: Int = BOGUS_RIGHT
 
-    // Keep knowledge of which sensor is in which position
-    val gameSensors = mutableMapOf<String, SensorPosition>()
+    // Keep knowledge of which sensor is in which position. Touched from rx,
+    // serial and web server threads, so only access it while holding its lock
+    private val sensorPositions = linkedMapOf<String, SensorPosition>()
+
+    // Snapshot of the sensors currently in play. Anything deleted or unplugged
+    // gets pruned before returning
+    val gameSensors: Map<String, SensorPosition>
+        get() = synchronized(sensorPositions) {
+            pruneInactiveSensors()
+            LinkedHashMap(sensorPositions)
+        }
 
     // Record start time and initialize other timing
     private val startTime = Calendar.getInstance()
@@ -92,29 +101,30 @@ constructor(
             }
     }
 
-    private fun updateSensorPositions(sensorReading: Sensor.Reading): SensorPosition? {
+    // caller must hold the sensorPositions lock
+    private fun pruneInactiveSensors() {
+        val active = sensorState.activeSensorNames.toSet()
+        sensorPositions.keys.retainAll(active)
+    }
+
+    private fun updateSensorPositions(sensorReading: Sensor.Reading): SensorPosition? = synchronized(sensorPositions) {
         // first, check if we're already monitoring this sensor
-        val current = gameSensors[sensorReading.sensorName]
+        val current = sensorPositions[sensorReading.sensorName]
         if (null != current) return current
 
         // next, if there are any dead sensors, clear them so we can hang on
         // to this new one
-        val active = sensorState.activeSensorNames
-        for (name in gameSensors.keys) {
-            if (!active.contains(name)) {
-                gameSensors.remove(name)
-            }
-        }
+        pruneInactiveSensors()
 
         // finally, check and see if there's a place for the new sensor and
         // store + return it if so
-        val newPosition = when (gameSensors.size) {
+        val newPosition = when (sensorPositions.size) {
             2 -> return null // nope, all full
-            1 -> if (gameSensors.values.contains(SensorPosition.RIGHT)) SensorPosition.LEFT else SensorPosition.RIGHT // replace!
+            1 -> if (sensorPositions.values.contains(SensorPosition.RIGHT)) SensorPosition.LEFT else SensorPosition.RIGHT // replace!
             0 -> SensorPosition.LEFT // first in goes to left
             else -> throw RuntimeException("Too many sensors bro") // Uh-oh, crashy crashy
         }
-        gameSensors[sensorReading.sensorName] = newPosition
+        sensorPositions[sensorReading.sensorName] = newPosition
         return newPosition
     }
 
@@ -134,18 +144,19 @@ constructor(
 
     // if there's one sensor, change its position. if there are two,
     // flip them. if there are zero or error state return
-    fun flipSensors() {
-        val ref = gameSensors
+    fun flipSensors() = synchronized(sensorPositions) {
+        pruneInactiveSensors()
+        val ref = sensorPositions
         val keys = ref.keys.toList()
         when (ref.size) {
             2 -> {
                 // wow there is probably a less fugly way to do this!
                 val oldZeroPosition = ref[keys[0]] as SensorPosition
                 val oldOnePosition = ref[keys[1]] as SensorPosition
-                gameSensors[keys[0]] = oldOnePosition
-                gameSensors[keys[1]] = oldZeroPosition
+                ref[keys[0]] = oldOnePosition
+                ref[keys[1]] = oldZeroPosition
             }
-            1 -> gameSensors[keys[0]] = if (ref[keys[0]] == SensorPosition.LEFT) SensorPosition.RIGHT else SensorPosition.LEFT
+            1 -> ref[keys[0]] = if (ref[keys[0]] == SensorPosition.LEFT) SensorPosition.RIGHT else SensorPosition.LEFT
             // else do nothing
         }
     }
@@ -340,10 +351,10 @@ constructor(
     }
 
     private fun updateState() {
-        for (sensorName in gameSensors.keys) {
+        for ((sensorName, position) in gameSensors) {
             val bpm = getBPM(sensorName)
             val fixBPM = bpm?.toInt() ?: -1
-            when (gameSensors[sensorName]) {
+            when (position) {
                 SensorPosition.LEFT -> {
                     leftBuffer.add(fixBPM)
                     leftBPM = averageBuffer(leftBuffer)
@@ -352,8 +363,6 @@ constructor(
                     rightBuffer.add(fixBPM)
                     rightBPM = averageBuffer(rightBuffer)
                 }
-
-                null -> {}
             }
         }
 
