@@ -221,16 +221,9 @@ constructor(
         val glitches = listOf(BooleanArray(readings.size), BooleanArray(readings.size), BooleanArray(readings.size), BooleanArray(readings.size))
         for (sensorIndex in 0..3) {
             for (readingIndex in readings.indices) {
-                // NOTE: there is a transient NPE here with the simulator data. which does not
-                // seem possible because it loops and the readings manipulation above is
-                // safety checked? but yeah, i dunno
-                try {
-                    val reading = readings[readingIndex].asArray[sensorIndex]
-                    pivotReadings[sensorIndex][readingIndex] = reading
-                    glitches[sensorIndex][readingIndex] = readingIsGlitch(reading)
-                } catch (_: NullPointerException) {
-                    return null
-                }
+                val reading = readings[readingIndex].asArray[sensorIndex]
+                pivotReadings[sensorIndex][readingIndex] = reading
+                glitches[sensorIndex][readingIndex] = readingIsGlitch(reading)
             }
         }
 

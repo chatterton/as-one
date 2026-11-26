@@ -5,7 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import org.perpetualthrill.asone.console.util.subscribeWithErrorLogging
 import java.time.Instant
-import java.util.*
+import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.TimeUnit
 
 private const val TIME_TO_DISCONNECT_MS = 1500L
@@ -38,7 +38,9 @@ class Sensor(val name: String) {
             }
     }
 
-    val readings = ArrayDeque<Reading>()
+    // written by handset thread, pruned on rx computation thread, and
+    // snapshat by the game loop and web server -- must be thread-safe
+    val readings = ConcurrentLinkedDeque<Reading>()
         get() {
             if (finished) throw RuntimeException("Sensor read after finished!")
             return field

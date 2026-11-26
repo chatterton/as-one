@@ -3,13 +3,14 @@ package org.perpetualthrill.asone.console.state
 import com.kizitonwose.time.seconds
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import org.perpetualthrill.asone.console.di.Injector
 import org.perpetualthrill.asone.console.io.SerialMonitor
 import org.perpetualthrill.asone.console.model.SENSOR_UPDATE_INTERVAL
 import org.perpetualthrill.asone.console.model.Sensor
 import org.perpetualthrill.asone.console.model.SensorSimulator
 import org.perpetualthrill.asone.console.util.subscribeWithErrorLogging
-import java.util.*
+import java.util.concurrent.ConcurrentLinkedDeque
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,10 +26,12 @@ class SensorState
 constructor(
     private val serialMonitor: SerialMonitor
 ) {
-    private val internalReadingStream = PublishSubject.create<Sensor.Reading>()
+    // each sensor runs from its own thread. Serialize the stream so subscribers never run concurrently
+    private val internalReadingStream: Subject<Sensor.Reading> = PublishSubject.create<Sensor.Reading>().toSerialized()
     val readingStream: Observable<Sensor.Reading> = internalReadingStream
 
-    private val readingBuffer = ArrayDeque<Sensor.Reading>(SENSOR_READING_SAMPLE_SIZE)
+    // read by the web server thread while the subscriber below mutates it
+    private val readingBuffer = ConcurrentLinkedDeque<Sensor.Reading>()
 
     private val simulators = mutableMapOf<String, SensorSimulator>()
 
@@ -37,14 +40,9 @@ constructor(
 
         // maintain queue of last n readings for web service
         readingStream.subscribeWithErrorLogging(this) { reading ->
-            // data structure is not thread safe, but so long as this subscriber
-            // is the only thing mutating it we are good
             readingBuffer.addFirst(reading)
             while (readingBuffer.size > SENSOR_READING_SAMPLE_SIZE) {
-                // not sure why this occasionally throws, but it does
-                try {
-                    readingBuffer.removeLast()
-                } catch (e: NoSuchElementException) { }
+                readingBuffer.pollLast()
             }
         }
     }
